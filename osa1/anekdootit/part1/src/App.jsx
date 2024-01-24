@@ -23,8 +23,8 @@ const App = () => {
   const [selected, setSelected] = useState(0)
 
   const setToNext = () => {
-    const randomAnekdootti = Math.floor(Math.random() * anecdotes.length);
-    setSelected(randomAnekdootti);
+    const randomAnekdootti = Math.floor(Math.random() * anecdotes.length)
+    setSelected(randomAnekdootti)
 
   }
 
