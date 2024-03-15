@@ -51,11 +51,24 @@ const Person = ({persons, searchName, deleteContact}) => {
   )
 }
 
+const Notification = ({ message }) => {
+  if (!message) {
+    return null
+  }
+
+  return (
+    <div className="error">
+      {message}
+    </div>
+  )
+}
+
 const App = () => {
   const [persons, setPersons] = useState([])
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [searchName, setSearchName] = useState('')
+  const [errorMessage, setErrorMessage] = useState('')
 
   useEffect(() => {
     console.log('effect')
@@ -73,7 +86,7 @@ const App = () => {
       alert(`${newName} is already added to the phonebook.`);
       return;
     }
-  
+
     const recentId = persons.reduce((max, person) => Math.max(max, person.id), 0);
     const newId = recentId + 1;
 
@@ -89,11 +102,23 @@ const App = () => {
         setPersons(persons.concat(returnedPerson))
         setNewName('')
         setNewNumber('')
+        setErrorMessage(
+          ` '${newName}' was added to the phonebook`
+        )
+        setTimeout(() => {
+          setErrorMessage('')
+        }, 5000)
+      })
+      .catch(error => {
+        console.error("Error deleting contact:", error)
+        setErrorMessage(`Error deleting contact: ${error.message}`)
+        setTimeout(() => {
+          setErrorMessage('')
+        }, 5000)
       })
 }
 
 const deleteContact = (id) => {
-  event.preventDefault()
   const confirmDelete = window.confirm("Are you sure you want to delete this contact?")
 
   const index = persons.findIndex(person => person.id === id)
@@ -102,18 +127,24 @@ const deleteContact = (id) => {
     return
   }
 
-  if (confirmDelete) {
-    const copyPersons = [...persons]
-    copyPersons.splice(index, 1)
-    setPersons(copyPersons)
   
     contactService
       .erase(id)
-      .then(() => {
-        console.log(`${newName} was deleted from the phonebook`)
-      })
-}
-
+    .then(() => {
+      const updatedPersons = persons.filter(person => person.id !== id)
+      setPersons(updatedPersons);
+      setErrorMessage(`Deletion of contact from the phonebook was successful`);
+      setTimeout(() => {
+        setErrorMessage('');
+      }, 5000);
+    })
+    .catch(error => {
+      console.error("Error deleting contact:", error)
+      setErrorMessage(`Error deleting contact: ${error.message}`)
+      setTimeout(() => {
+        setErrorMessage('')
+      }, 5000)
+    })
 }
 
   const handleContactChange = (event) => {
@@ -134,6 +165,7 @@ const deleteContact = (id) => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={errorMessage} />
       <Filter searchName={searchName} handleSearchChange={handleSearchChange} />
       <h2>Add a new</h2>
       <PersonForm  addContact={addContact}
