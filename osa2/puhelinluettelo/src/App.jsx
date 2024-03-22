@@ -79,6 +79,12 @@ const App = () => {
       })
   }, [])
 
+  const generateId = () => {
+    const timestamp = new Date().getTime() // Current time
+    const randomComponent = Math.floor(Math.random() * 1000) // Generate a random number using math.random
+    return `${timestamp}-${randomComponent}` // Time minus random to generate a new random id
+  }
+
   const addContact = (event) => {
     event.preventDefault()
   
@@ -92,7 +98,7 @@ const App = () => {
 
     const contactObject = {
       name: newName,
-      id: newId,
+      id: generateId(),
       number: newNumber
     }
   
@@ -110,8 +116,8 @@ const App = () => {
         }, 5000)
       })
       .catch(error => {
-        console.error("Error deleting contact:", error)
-        setErrorMessage(`Error deleting contact: ${error.message}`)
+        console.error("Error adding contact:", error)
+        setErrorMessage(`Error adding contact: ${error.message}`)
         setTimeout(() => {
           setErrorMessage('')
         }, 5000)
