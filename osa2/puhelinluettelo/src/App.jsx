@@ -79,7 +79,7 @@ const App = () => {
       })
   }, [])
 
-  const generateId = () => {
+  const generateId = () => { //To avoid duplicates after deleting a contact
     const timestamp = new Date().getTime() // Current time
     const randomComponent = Math.floor(Math.random() * 1000) // Generate a random number using math.random
     return `${timestamp}-${randomComponent}` // Time minus random to generate a new random id
@@ -89,12 +89,12 @@ const App = () => {
     event.preventDefault()
   
     if (persons.some(person => person.name === newName)) {
-      alert(`${newName} is already added to the phonebook.`);
-      return;
+      alert(`${newName} is already added to the phonebook.`)
+      return
     }
 
-    const recentId = persons.reduce((max, person) => Math.max(max, person.id), 0);
-    const newId = recentId + 1;
+    const recentId = persons.reduce((max, person) => Math.max(max, person.id), 0)
+    const newId = recentId + 1
 
     const contactObject = {
       name: newName,
@@ -138,11 +138,11 @@ const deleteContact = (id) => {
       .erase(id)
     .then(() => {
       const updatedPersons = persons.filter(person => person.id !== id)
-      setPersons(updatedPersons);
-      setErrorMessage(`Deletion of contact from the phonebook was successful`);
+      setPersons(updatedPersons)
+      setErrorMessage(`Deletion of contact from the phonebook was successful`)
       setTimeout(() => {
-        setErrorMessage('');
-      }, 5000);
+        setErrorMessage('')
+      }, 5000)
     })
     .catch(error => {
       console.error("Error deleting contact:", error)
