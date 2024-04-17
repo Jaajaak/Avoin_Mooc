@@ -1,6 +1,41 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios'
 
+const Filter = ({name, handleChange, onSearch}) => {
+
+  return (
+    <form onSubmit={onSearch}>
+        find countries <input value={name.name} onChange={handleChange} />
+        <button type="submit">Search</button>
+      </form>
+  )
+}
+
+const Result = ({ filteredCountries, showLanguages }) => {
+  return (
+    <div>
+      {filteredCountries.length > 10 ? (
+        <p>Too many countries, specify another filter</p>
+      ) : filteredCountries.length === 1 ? (
+        <div>
+          <h2>{filteredCountries[0].name.common}</h2>
+          <p><strong>Population:</strong> {filteredCountries[0].population}</p>
+          <p><strong>Capital:</strong> {filteredCountries[0].capital}</p>
+          <p><strong>Languages:</strong></p>
+          <ul>{showLanguages(filteredCountries[0].languages)}</ul>
+          <img src={filteredCountries[0].flags.png} />
+        </div>
+      ) : (
+        <ul>
+          {filteredCountries.map(country => (
+            <li key={country.name.common}>{country.name.common}</li>
+          ))}
+        </ul>
+      )}
+    </div>
+  )
+}
+
 const App = () => {
   const [name, setName] = useState('')
   const [countries, setCountries] = useState([])
@@ -43,30 +78,8 @@ const App = () => {
 
   return (
     <div>
-      <form onSubmit={onSearch}>
-        find countries <input value={name} onChange={handleChange} />
-        <button type="submit">Search</button>
-      </form>
-      <div>
-        {filteredCountries.length > 10 ? (
-          <p>Too many countries, specify another filter</p>
-        ) : filteredCountries.length === 1 ? (
-          <div>
-            <h2>{filteredCountries[0].name.common}</h2>
-            <p><strong>Population:</strong> {filteredCountries[0].population}</p>
-            <p><strong>Capital:</strong> {filteredCountries[0].capital}</p>
-            <p><strong>Languages:</strong></p>
-            <ul>{showLanguages(filteredCountries[0].languages)}</ul>
-            <img src={filteredCountries[0].flags.png} />
-          </div>
-        ) : (
-          <ul>
-            {filteredCountries.map(country => (
-              <li key={country.name.common}>{country.name.common}</li>
-            ))}
-          </ul>
-        )}
-      </div>
+      <Filter name={name} handleChange={handleChange} onSearch={onSearch} />
+      <Result filteredCountries={filteredCountries} showLanguages={showLanguages} />
     </div>
   )
 }
